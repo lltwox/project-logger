@@ -1,16 +1,14 @@
-var Logger = require('../lib').Logger,
-    testUtil = require('./test-util');
-
-require('should');
+var Logger = require('../lib'),
+    util = require('./util');
 
 describe('Looger', function() {
 
     var tempFilename;
     beforeEach(function() {
-        tempFilename = testUtil.createTempFilename();
+        tempFilename = util.createTempFilename();
     });
     afterEach(function() {
-        testUtil.removeTempFile(tempFilename);
+        util.removeTempFile(tempFilename);
     });
 
     it('should be able to log nothing', function(done) {
@@ -21,8 +19,8 @@ describe('Looger', function() {
         logger.info();
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLoggedMessagesNumber(tempFilename, 1);
-            testUtil.checkLastLogMessage(tempFilename, '');
+            util.checkLoggedMessagesNumber(tempFilename, 1);
+            util.checkLastLogMessage(tempFilename, '');
             logger.close();
             done();
         });
@@ -37,7 +35,7 @@ describe('Looger', function() {
         logger.info(object.property);
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLastLogMessage(tempFilename, 'undefined');
+            util.checkLastLogMessage(tempFilename, 'undefined');
             logger.close();
             done();
         });
@@ -51,8 +49,8 @@ describe('Looger', function() {
         logger.info(null);
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLoggedMessagesNumber(tempFilename, 1);
-            testUtil.checkLastLogMessage(tempFilename, '');
+            util.checkLoggedMessagesNumber(tempFilename, 1);
+            util.checkLastLogMessage(tempFilename, '');
             logger.close();
             done();
         });
@@ -66,8 +64,8 @@ describe('Looger', function() {
         logger.info(1);
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLoggedMessagesNumber(tempFilename, 1);
-            testUtil.checkLastLogMessage(tempFilename, '1');
+            util.checkLoggedMessagesNumber(tempFilename, 1);
+            util.checkLastLogMessage(tempFilename, '1');
             logger.close();
             done();
         });
@@ -81,8 +79,8 @@ describe('Looger', function() {
         logger.info('string');
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLoggedMessagesNumber(tempFilename, 1);
-            testUtil.checkLastLogMessage(tempFilename, 'string');
+            util.checkLoggedMessagesNumber(tempFilename, 1);
+            util.checkLastLogMessage(tempFilename, 'string');
             logger.close();
             done();
         });
@@ -96,8 +94,8 @@ describe('Looger', function() {
         logger.info({a: {b: 'c'}});
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLoggedMessagesNumber(tempFilename, 1);
-            testUtil.checkLastLogMessage(tempFilename, '{"a":{"b":"c"}}');
+            util.checkLoggedMessagesNumber(tempFilename, 1);
+            util.checkLastLogMessage(tempFilename, '{"a":{"b":"c"}}');
             logger.close();
             done();
         });
@@ -111,7 +109,7 @@ describe('Looger', function() {
         logger.info(new Error('Some error'));
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLogMessageContain(tempFilename, 'Some error');
+            util.checkLogMessageContain(tempFilename, 'Some error');
             logger.close();
             done();
         });
@@ -127,8 +125,8 @@ describe('Looger', function() {
         logger.info(object);
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLoggedMessagesNumber(tempFilename, 1);
-            testUtil.checkLogMessageContain(tempFilename, 'Object');
+            util.checkLoggedMessagesNumber(tempFilename, 1);
+            util.checkLogMessageContain(tempFilename, 'Object');
             logger.close();
             done();
         });

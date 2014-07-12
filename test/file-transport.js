@@ -1,19 +1,17 @@
-var Logger = require('../lib').Logger,
-    testUtil = require('./test-util'),
+var Logger = require('../lib'),
+    util = require('./util'),
     fs = require('fs'),
     os = require('os'),
     path = require('path');
-
-require('should');
 
 describe('File transport', function() {
 
     var tempFilename;
     beforeEach(function() {
-        tempFilename = testUtil.createTempFilename();
+        tempFilename = util.createTempFilename();
     });
     afterEach(function() {
-        testUtil.removeTempFile(tempFilename);
+        util.removeTempFile(tempFilename);
     });
 
     it('should create file', function(done) {
@@ -54,7 +52,7 @@ describe('File transport', function() {
         logger.info('Hello');
 
         logger.transports.file.once('drain', function() {
-            testUtil.checkLastLogMessage(tempFilename, 'Hello');
+            util.checkLastLogMessage(tempFilename, 'Hello');
             logger.close();
             done();
         });
@@ -71,7 +69,7 @@ describe('File transport', function() {
                 if (err) throw err;
                 logger.info('two');
                 logger.transports.file.once('drain', function() {
-                    testUtil.checkLastLogMessage(tempFilename, 'two');
+                    util.checkLastLogMessage(tempFilename, 'two');
                     logger.close();
                     fs.unlinkSync(tempFilename + '.1');
                     done();
@@ -91,7 +89,7 @@ describe('File transport', function() {
             });
             secondLogger.log('i am ok');
             secondLogger.transports.file.once('drain', function() {
-                testUtil.checkLoggedMessagesNumber(tempFilename, 2);
+                util.checkLoggedMessagesNumber(tempFilename, 2);
                 firstLogger.close();
                 secondLogger.close();
                 done();

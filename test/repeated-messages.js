@@ -1,16 +1,15 @@
-var Logger = require('../lib').Logger,
-    testUtil = require('./test-util');
+var Logger = require('../lib'),
+    util = require('./util');
 
-require('should');
 
 describe('Logger', function() {
 
     var tempFilename;
     beforeEach(function() {
-        tempFilename = testUtil.createTempFilename();
+        tempFilename = util.createTempFilename();
     });
     afterEach(function() {
-        testUtil.removeTempFile(tempFilename);
+        util.removeTempFile(tempFilename);
     });
 
     it('should log repeated messages', function(done) {
@@ -24,8 +23,8 @@ describe('Logger', function() {
 
         logger.on('repeat', function() {
             logger.transports.file.on('drain', function() {
-                testUtil.checkLoggedMessagesNumber(tempFilename, 2);
-                testUtil.checkLastLogMessage(
+                util.checkLoggedMessagesNumber(tempFilename, 2);
+                util.checkLastLogMessage(
                     tempFilename, 'Last message repeated 1 time(s)'
                 );
                 logger.close();
@@ -50,8 +49,8 @@ describe('Logger', function() {
 
         logger.once('repeat', function() {
             logger.transports.file.once('drain', function() {
-                testUtil.checkLoggedMessagesNumber(tempFilename, 2);
-                testUtil.checkLastLogMessage(
+                util.checkLoggedMessagesNumber(tempFilename, 2);
+                util.checkLastLogMessage(
                     tempFilename, 'Last message repeated 2 time(s)'
                 );
                 logger.close();
@@ -78,8 +77,8 @@ describe('Logger', function() {
 
         logger.on('repeat', function() {
             logger.transports.file.once('drain', function() {
-                testUtil.checkLoggedMessagesNumber(tempFilename, 3);
-                testUtil.checkLastLogMessage(tempFilename, 'two');
+                util.checkLoggedMessagesNumber(tempFilename, 3);
+                util.checkLastLogMessage(tempFilename, 'two');
                 logger.close();
                 done();
             });
@@ -101,8 +100,8 @@ describe('Logger', function() {
         logger.transports.file.on('drain', function() {
             if (!messages) return messages += 1;
 
-            testUtil.checkLoggedMessagesNumber(tempFilename, 2);
-            testUtil.checkLastLogMessage(tempFilename, 'one');
+            util.checkLoggedMessagesNumber(tempFilename, 2);
+            util.checkLastLogMessage(tempFilename, 'one');
             logger.close();
             done();
         });
@@ -118,8 +117,8 @@ describe('Logger', function() {
         logger.error('one');
 
         logger.transports.file.once('drain', function() {
-            testUtil.checkLoggedMessagesNumber(tempFilename, 2);
-            testUtil.checkLastLogMessage(tempFilename, 'one');
+            util.checkLoggedMessagesNumber(tempFilename, 2);
+            util.checkLastLogMessage(tempFilename, 'one');
             logger.close();
             done();
         });

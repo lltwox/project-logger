@@ -1,6 +1,6 @@
 {
   "name": "project-logger",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Logger with basic capabilities, that would fit most projects",
   "homepage": "https://github.com/lltwox/project-logger",
   "keywords": [
@@ -17,7 +17,7 @@
     "url": "https://github.com/lltwox/project-logger.git"
   },
   "scripts": {
-    "test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter dot"
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha"
   },
   "license": "MIT",
   "dependencies": {

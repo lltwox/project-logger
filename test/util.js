@@ -10,8 +10,12 @@ exports.createTempFilename = function() {
 };
 
 exports.removeTempFile = function(file) {
-    if (fs.existsSync(file)) {
-        fs.unlinkSync(file);
+    try {
+        if (fs.existsSync(file)) {
+            fs.unlinkSync(file);
+        }
+    } catch (err) {
+        // ignorring - after each hook
     }
 };
 

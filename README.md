@@ -5,7 +5,7 @@ project-logger
 
 ##Example
 ```js
-var Logger = require('project-logger').Logger;
+var Logger = require('project-logger');
 var logger = new Logger();
 ...
 logger.info('Object is now: ', obj);
@@ -19,13 +19,13 @@ logger.error(new Error('Initialization error'));
 ####Factory.get(options)
 Creates an instance of logger. `options` can be either an object, which will be passed to logger for configuration or a string, that will serve as a name, that instance will be remembered by. In case of an object, `name` option will be used to store instance.
 ```js
-var factory = require('project-logger');
-var logger = factory.get({name: 'example', colors: false});
+var Factory = require('project-logger').Factory;
+var logger = Factory.get({name: 'example', colors: false});
 
 // later in code
 var logger = require('project-logger').get('exmaple'); // same instance as before
 ```
-####Factory.set(name)
+####Factory.set(name, instance)
 Sets an instance for given name. Can be handy for testing.
 
 ###Class: Logger
@@ -87,7 +87,7 @@ At the moment is not configurable. Looks like this:
 ```
 30 May 2014 13:05:11 - [cluster] - 31749 - INFO:  Worker tracking:01 disconnected
 ```
-Where first part is date, then goes name, specified in options, then pid, severity and message itself.
+Where first part is date, then goes name, specified in options, then pid, severity and message itself. Should be enough, no?
 
 ##Contributing
 Found a bug, have a feature proposal or want to add a pull request? All are welcome. Just go to issues and write it down.

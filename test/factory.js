@@ -1,5 +1,5 @@
-var LoggerFactory = require('../lib'),
-    testUtil = require('./test-util');
+var LoggerFactory = require('../lib').Factory,
+    util = require('./util');
 
 describe('Looger factory', function() {
 
@@ -16,8 +16,8 @@ describe('Looger factory', function() {
     });
 
     it('should create independent instances', function(done) {
-        var file1 = testUtil.createTempFilename();
-        var file2 = testUtil.createTempFilename();
+        var file1 = util.createTempFilename();
+        var file2 = util.createTempFilename();
 
         var logger1 = LoggerFactory.get({
             name: 'logger1',
@@ -36,16 +36,16 @@ describe('Looger factory', function() {
             drained++;
             if (drained < 2) return;
 
-            testUtil.checkLoggedMessagesNumber(file1, 1);
-            testUtil.checkLoggedMessagesNumber(file2, 1);
-            testUtil.checkLastLogMessage(file1, 'first');
-            testUtil.checkLastLogMessage(file2, 'second');
+            util.checkLoggedMessagesNumber(file1, 1);
+            util.checkLoggedMessagesNumber(file2, 1);
+            util.checkLastLogMessage(file1, 'first');
+            util.checkLastLogMessage(file2, 'second');
             logger1.close();
             logger2.close();
             done();
 
-            testUtil.removeTempFile(file1);
-            testUtil.removeTempFile(file2);
+            util.removeTempFile(file1);
+            util.removeTempFile(file2);
         };
 
         logger1.transports.file.on('drain', onDrain);

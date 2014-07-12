@@ -1,16 +1,14 @@
-var Logger = require('../lib').Logger,
-    testUtil = require('./test-util');
-
-require('should');
+var Logger = require('../lib'),
+    util = require('./util');
 
 describe('Logger', function() {
 
     var tempFilename;
     beforeEach(function() {
-        tempFilename = testUtil.createTempFilename();
+        tempFilename = util.createTempFilename();
     });
     afterEach(function() {
-        testUtil.removeTempFile(tempFilename);
+        util.removeTempFile(tempFilename);
     });
 
     it('should log nothing with level `none`', function() {
@@ -40,8 +38,8 @@ describe('Logger', function() {
         logger.debug('four');
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLoggedMessagesNumber(tempFilename, 1);
-            testUtil.checkLastLogMessage(tempFilename, 'one');
+            util.checkLoggedMessagesNumber(tempFilename, 1);
+            util.checkLastLogMessage(tempFilename, 'one');
             logger.close();
             done();
         });
@@ -59,8 +57,8 @@ describe('Logger', function() {
         logger.debug('four');
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLoggedMessagesNumber(tempFilename, 2);
-            testUtil.checkLastLogMessage(tempFilename, 'two');
+            util.checkLoggedMessagesNumber(tempFilename, 2);
+            util.checkLastLogMessage(tempFilename, 'two');
             logger.close();
             done();
         });
@@ -78,8 +76,8 @@ describe('Logger', function() {
         logger.debug('four');
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLoggedMessagesNumber(tempFilename, 3);
-            testUtil.checkLastLogMessage(tempFilename, 'three');
+            util.checkLoggedMessagesNumber(tempFilename, 3);
+            util.checkLastLogMessage(tempFilename, 'three');
             logger.close();
             done();
         });
@@ -97,8 +95,8 @@ describe('Logger', function() {
         logger.debug('four');
 
         logger.transports.file.on('drain', function() {
-            testUtil.checkLoggedMessagesNumber(tempFilename, 4);
-            testUtil.checkLastLogMessage(tempFilename, 'four');
+            util.checkLoggedMessagesNumber(tempFilename, 4);
+            util.checkLastLogMessage(tempFilename, 'four');
             logger.close();
             done();
         });

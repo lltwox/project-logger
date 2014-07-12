@@ -1,6 +1,4 @@
-var Logger = require('../lib').Logger;
-
-require('should');
+var Logger = require('../lib');
 
 describe('Console transport', function() {
 
