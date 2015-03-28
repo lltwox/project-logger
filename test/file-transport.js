@@ -58,26 +58,6 @@ describe('File transport', function() {
         });
     });
 
-    it('should recreate file, after it was moved or renamed', function(done) {
-        var logger = new Logger({
-            transports: { file: tempFilename }
-        });
-        logger.info('one');
-
-        logger.transports.file.once('drain', function() {
-            fs.rename(tempFilename, tempFilename + '.1', function(err) {
-                if (err) throw err;
-                logger.info('two');
-                logger.transports.file.once('drain', function() {
-                    util.checkLastLogMessage(tempFilename, 'two');
-                    logger.close();
-                    fs.unlinkSync(tempFilename + '.1');
-                    done();
-                });
-            });
-        });
-    });
-
     it('can share file between two loggers', function(done) {
         var firstLogger = new Logger({
             transports: { file: tempFilename }

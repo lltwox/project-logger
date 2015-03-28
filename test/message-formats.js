@@ -1,7 +1,7 @@
 var Logger = require('../lib'),
     util = require('./util');
 
-describe('Looger', function() {
+describe('Logger', function() {
 
     var tempFilename;
     beforeEach(function() {

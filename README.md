@@ -80,7 +80,7 @@ Logs messages to file. Name of the file should be specified as a value of file k
     }
 }
 ```
-Transport attempts to create file and whole path to it, if not exists. Also file is constantly beeing watched over, so if moved or renamed (which, for example, logrotate loves to do by default), file is re-created and re-opened.
+Transport attempts to create file and whole path to it, if not exists.
 
 ###Message format
 At the moment is not configurable. Looks like this:

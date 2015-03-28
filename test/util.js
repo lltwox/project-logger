@@ -2,8 +2,6 @@ var fs = require('fs'),
     os = require('os'),
     crypto = require('crypto');
 
-require('should');
-
 exports.createTempFilename = function() {
     return os.tmpdir() + 'logtest-'
         + crypto.randomBytes(4).readUInt32LE(0) + '.log';
