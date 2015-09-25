@@ -39,6 +39,8 @@ Creates a new logger instance. `options` is an object with configuration paramet
     console: true
   },
   colors: true,        // whether to use colored output (affects only console transport)
+  format: '{timestamp} - [{name}] - {pid} - {level}:  ',
+                       // format for message prefix
   repeatTimeout: 1000  // time in ms, when identical messages stacked
 };
 ```
@@ -83,11 +85,17 @@ Logs messages to file. Name of the file should be specified as a value of file k
 Transport attempts to create file and whole path to it, if not exists.
 
 ###Message format
-At the moment is not configurable. Looks like this:
+Configurable via `format` config option. Available info, that can be user:
+* `{timestamp}` - time and date of logged message
+* `{name}` – name of the used logger
+* `{pid}` – process id
+* `{hostname}` – system host name (os.hostname())
+* `{leve}` – logging level of the message
+
+Default format looks like this:
 ```
 30 May 2014 13:05:11 - [cluster] - 31749 - INFO:  Worker tracking:01 disconnected
 ```
-Where first part is date, then goes name, specified in options, then pid, severity and message itself. Should be enough, no?
 
 ##Contributing
 Found a bug, have a feature proposal or want to add a pull request? All are welcome. Just go to issues and write it down.

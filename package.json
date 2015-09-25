@@ -1,6 +1,6 @@
 {
   "name": "project-logger",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Logger with basic capabilities, that would fit most projects",
   "homepage": "https://github.com/lltwox/project-logger",
   "keywords": [
