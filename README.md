@@ -33,13 +33,13 @@ Sets an instance for given name. Can be handy for testing.
 Creates a new logger instance. `options` is an object with configuration parameters. Available options are:
 ```js
 {
-    name: 'default',     // part of formatted message, can be used to grep logs
-    level: LEVEL_INFO,   // logging level
-    transports: {        // list of transports to use, see below
-        console: true
-    },
-    colors: true,        // whether to use colored output (affects only console transport)
-    repeatTimeout: 1000  // time in ms, when identical messages stacked
+  name: 'default',     // part of formatted message, can be used to grep logs
+  level: LEVEL_INFO,   // logging level
+  transports: {        // list of transports to use, see below
+    console: true
+  },
+  colors: true,        // whether to use colored output (affects only console transport)
+  repeatTimeout: 1000  // time in ms, when identical messages stacked
 };
 ```
 
@@ -75,9 +75,9 @@ Logs messages to system log, using [node-syslog](https://github.com/schamane/nod
 Logs messages to file. Name of the file should be specified as a value of file key in transports hash, like that:
 ```js
 {
-    transports: {
-        file: '/tmp/app.log'
-    }
+  transports: {
+    file: '/tmp/app.log'
+  }
 }
 ```
 Transport attempts to create file and whole path to it, if not exists.
