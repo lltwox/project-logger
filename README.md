@@ -71,8 +71,6 @@ Alias of `logger.info()`
 To enable transport, pass it's name in `transports` options hash.
 ####Console
 Wrapper around `console.log()` and `console.err`. When `colors=true`, messages will be colored up, depending on their severity.
-####Syslog
-Logs messages to system log, using [node-syslog](https://github.com/schamane/node-syslog) package.
 ####File
 Logs messages to file. Name of the file should be specified as a value of file key in transports hash, like that:
 ```js
