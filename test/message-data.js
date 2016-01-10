@@ -126,7 +126,14 @@ describe('Logger', function() {
 
     logger.transports.file.on('drain', function() {
       util.checkLoggedMessagesNumber(tempFilename, 1);
-      util.checkLogMessageContain(tempFilename, 'Object');
+
+      // for different node version
+      try {
+        util.checkLogMessageContain(tempFilename, 'Object');
+      } catch(err) {
+        util.checkLogMessageContain(tempFilename, 'Circular');
+      }
+
       logger.close();
       done();
     });

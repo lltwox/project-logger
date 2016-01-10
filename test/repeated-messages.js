@@ -35,23 +35,20 @@ describe('Logger', function() {
 
   it('should log repeated messages within timeout', function(done) {
     var logger = new Logger({
-      repeatTimeout: 5,
+      repeatTimeout: 10,
       transports: {file: tempFilename}
     });
 
     logger.info('one');
     setTimeout(function() {
       logger.info('one');
-      setTimeout(function() {
-        logger.info('one');
-      }, 3);
-    }, 3);
+    }, 1);
 
     logger.once('repeat', function() {
       logger.transports.file.once('drain', function() {
         util.checkLoggedMessagesNumber(tempFilename, 2);
         util.checkLastLogMessage(
-          tempFilename, 'Last message repeated 2 time(s)'
+          tempFilename, 'Last message repeated 1 time(s)'
         );
         logger.close();
         done();
@@ -63,7 +60,7 @@ describe('Logger', function() {
     + ' message gets logged', function(done) {
 
     var logger = new Logger({
-      repeatTimeout: 5,
+      repeatTimeout: 10,
       transports: {file: tempFilename}
     });
 
@@ -72,8 +69,8 @@ describe('Logger', function() {
       logger.info('one');
       setTimeout(function() {
         logger.info('two');
-      }, 3);
-    }, 3);
+      }, 1);
+    }, 1);
 
     logger.on('repeat', function() {
       logger.transports.file.once('drain', function() {
