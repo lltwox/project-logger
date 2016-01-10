@@ -17,7 +17,7 @@ logger.error(new Error('Initialization error'));
 `project-logger` module provides a factory and a registry for new loggers. All instances created with factory are stored in memory, so once configured logger can be used throughout the application.
 
 ####Factory.get(options)
-Creates an instance of logger. `options` can be either an object, which will be passed to logger for configuration or a string, that will serve as a name, that instance will be remembered by. In case of an object, `name` option will be used to store instance.
+Creates a new or returns exisiting instance of a logger. `options` can be either an object, which will be passed to logger for configuration or a string, that will serve as a name, that instance will be remembered by. In case of an object, `name` option will be used to store instance.
 ```js
 var Factory = require('project-logger').Factory;
 var logger = Factory.get({name: 'example', colors: false});
@@ -25,8 +25,13 @@ var logger = Factory.get({name: 'example', colors: false});
 // later in code
 var logger = require('project-logger').get('exmaple'); // same instance as before
 ```
+
+####Factory.copy(source, target)
+Creates a copy of existing instance with same configuration, but different name. Only one copy is created, all following calls will return same instance.
+
 ####Factory.set(name, instance)
 Sets an instance for given name. Can be handy for testing.
+
 
 ###Class: Logger
 ####Logger(options)

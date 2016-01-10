@@ -1,4 +1,5 @@
 var LoggerFactory = require('../lib').Factory,
+    Logger = require('../lib'),
     util = require('./util');
 
 describe('Looger factory', function() {
@@ -50,6 +51,46 @@ describe('Looger factory', function() {
 
     logger1.transports.file.on('drain', onDrain);
     logger2.transports.file.on('drain', onDrain);
+  });
+
+  it('should create copies', function() {
+    LoggerFactory.set('one', new Logger({
+      name: 'logger1',
+      repeatTimeout: 10
+    }));
+
+    var logger = LoggerFactory.copy('one', 'two');
+
+    logger.config.name.should.equal('two');
+    logger.config.repeatTimeout.should.equal(10);
+  });
+
+  it('should create independent copies', function() {
+    var one = new Logger({
+      name: 'one',
+      repeatTimeout: 10
+    });
+    LoggerFactory.set('one', one);
+    var two = LoggerFactory.copy('one', 'two');
+
+    one.configure({'repeatTimeout': 20});
+    two.configure({'repeatTimeout': 30});
+
+    one.config.repeatTimeout.should.equal(20);
+    two.config.repeatTimeout.should.equal(30);
+  });
+
+  it('should return existing logger instead of a copy', function() {
+    var one = new Logger({
+      name: 'one',
+      repeatTimeout: 10
+    });
+    LoggerFactory.set('one', one);
+    var two = LoggerFactory.copy('one', 'two');
+    two.configure({'repeatTimeout': 30});
+
+    var twotwo = LoggerFactory.copy('one', 'two');
+    twotwo.config.repeatTimeout.should.equal(30);
   });
 
 });
