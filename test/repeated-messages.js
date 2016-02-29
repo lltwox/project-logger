@@ -1,43 +1,43 @@
-var Logger = require('../lib'),
+var Logger = require('../lib').configure({
+      colors: false,
+      ns: 'repeated-messages'
+    }),
     util = require('./util');
-
 
 describe('Logger', function() {
 
-  var tempFilename;
-  beforeEach(function() {
-    tempFilename = util.createTempFilename();
+  var oldRepeat;
+  before(function() {
+    oldRepeat = Logger.config.repeat;
   });
-  afterEach(function() {
-    util.removeTempFile(tempFilename);
+  after(function() {
+    Logger.configure({repeat: oldRepeat});
+    util.console.restore();
+  });
+  beforeEach(function() {
+    util.console.mock();
   });
 
   it('should log repeated messages', function(done) {
-    var logger = new Logger({
-      repeatTimeout: 5,
-      transports: {file: tempFilename}
-    });
+    Logger.configure({repeat: 5});
+    var logger = Logger('repeat');
 
     logger.info('one');
     logger.info('one');
 
     logger.on('repeat', function() {
-      logger.transports.file.on('drain', function() {
-        util.checkLoggedMessagesNumber(tempFilename, 2);
-        util.checkLastLogMessage(
-          tempFilename, 'Last message repeated 1 time(s)'
-        );
-        logger.close();
-        done();
-      });
+      util.checkLoggedMessagesNumber('all', 2);
+      util.checkLastLogMessage(
+        'all', 'Last message repeated 1 time(s)'
+      );
+      util.console.restore();
+      done();
     });
   });
 
   it('should log repeated messages within timeout', function(done) {
-    var logger = new Logger({
-      repeatTimeout: 10,
-      transports: {file: tempFilename}
-    });
+    Logger.configure({repeat: 10});
+    var logger = Logger('timeout');
 
     logger.info('one');
     setTimeout(function() {
@@ -45,24 +45,18 @@ describe('Logger', function() {
     }, 1);
 
     logger.once('repeat', function() {
-      logger.transports.file.once('drain', function() {
-        util.checkLoggedMessagesNumber(tempFilename, 2);
-        util.checkLastLogMessage(
-          tempFilename, 'Last message repeated 1 time(s)'
-        );
-        logger.close();
-        done();
-      });
+      util.checkLoggedMessagesNumber('all', 2);
+      util.checkLastLogMessage('all', 'Last message repeated 1 time(s)');
+      util.console.restore();
+      done();
     });
   });
 
   it('should log repeated messages immediately if other'
     + ' message gets logged', function(done) {
 
-    var logger = new Logger({
-      repeatTimeout: 10,
-      transports: {file: tempFilename}
-    });
+    Logger.configure({repeat: 10});
+    var logger = Logger('immediate');
 
     logger.info('one');
     setTimeout(function() {
@@ -73,52 +67,40 @@ describe('Logger', function() {
     }, 1);
 
     logger.on('repeat', function() {
-      logger.transports.file.once('drain', function() {
-        util.checkLoggedMessagesNumber(tempFilename, 3);
-        util.checkLastLogMessage(tempFilename, 'two');
-        logger.close();
+      process.nextTick(function() {
+        util.checkLoggedMessagesNumber('all', 3);
+        util.checkLastLogMessage('all', 'two');
+        util.console.restore();
         done();
       });
     });
   });
 
   it('should log not repeat messages with different levels', function(done) {
-    var logger = new Logger({
-      repeatTimeout: 5,
-      transports: {file: tempFilename}
-    });
+    Logger.configure({repeat: 5});
+    var logger = Logger('levels');
 
     logger.info('one');
-    setTimeout(function() {
+    process.nextTick(function() {
       logger.error('one');
-    }, 3);
 
-    var messages = 0;
-    logger.transports.file.on('drain', function() {
-      if (!messages) return messages += 1;
-
-      util.checkLoggedMessagesNumber(tempFilename, 2);
-      util.checkLastLogMessage(tempFilename, 'one');
-      logger.close();
+      util.checkLoggedMessagesNumber('all', 2);
+      util.checkLastLogMessage('all', 'one');
+      util.console.restore();
       done();
     });
   });
 
-  it('should not repeat messages if disabled', function(done) {
-    var logger = new Logger({
-      repeatTimeout: 0,
-      transports: {file: tempFilename}
-    });
+  it('should not repeat messages if disabled', function() {
+    Logger.configure({repeat: 0});
+    var logger = Logger('disabled');
 
     logger.info('one');
-    logger.error('one');
+    logger.info('one');
 
-    logger.transports.file.once('drain', function() {
-      util.checkLoggedMessagesNumber(tempFilename, 2);
-      util.checkLastLogMessage(tempFilename, 'one');
-      logger.close();
-      done();
-    });
+    util.checkLoggedMessagesNumber('all', 2);
+    util.checkLastLogMessage('all', 'one');
+    util.console.restore();
   });
 
 });

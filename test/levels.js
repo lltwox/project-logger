@@ -1,105 +1,71 @@
-var Logger = require('../lib'),
+var Logger = require('../lib').configure({
+      colors: false,
+      ns: 'levels'
+    }),
     util = require('./util');
 
 describe('Logger', function() {
 
-  var tempFilename;
+  var oldLevel;
+  before(function() {
+    oldLevel = Logger.config.level;
+  });
+  after(function() {
+    util.console.restore();
+    Logger.configure({level: oldLevel});
+  });
   beforeEach(function() {
-    tempFilename = util.createTempFilename();
-  });
-  afterEach(function() {
-    util.removeTempFile(tempFilename);
+    util.console.mock();
   });
 
-  it('should log nothing with level `none`', function() {
-    var logger = new Logger({
-      level: Logger.LEVEL_NONE,
-      transports: {file: tempFilename}
-    });
+  it('should log only errors with level `error`', function() {
+    Logger.configure({level: 'error'});
+    var logger = Logger('error');
 
     logger.error('one');
     logger.warning('two');
     logger.info('three');
-    logger.debug('four');
 
-    logger.transports.file.messageQueue.should.eql([]);
-    logger.close();
+    util.checkLoggedMessagesNumber('all', 1);
+    util.checkLastLogMessage('all', 'one');
+    util.console.restore();
   });
 
-  it('should log only errors with level `error`', function(done) {
-    var logger = new Logger({
-      level: Logger.LEVEL_ERROR,
-      transports: {file: tempFilename}
-    });
+  it('should log warnings and errors with level `warning`', function() {
+    Logger.configure({level: 'warning'});
+    var logger = Logger('warning');
 
     logger.error('one');
     logger.warning('two');
     logger.info('three');
-    logger.debug('four');
 
-    logger.transports.file.on('drain', function() {
-      util.checkLoggedMessagesNumber(tempFilename, 1);
-      util.checkLastLogMessage(tempFilename, 'one');
-      logger.close();
-      done();
-    });
+    util.checkLoggedMessagesNumber('all', 2);
+    util.checkLastLogMessage('all', 'two');
+    util.console.restore();
   });
 
-  it('should log warnings and errors with level `warning`', function(done) {
-    var logger = new Logger({
-      level: Logger.LEVEL_WARNING,
-      transports: {file: tempFilename}
-    });
+  it('should log all but debug with level `info`', function() {
+    Logger.configure({level: 'info'});
+    var logger = Logger('info');
 
     logger.error('one');
     logger.warning('two');
     logger.info('three');
-    logger.debug('four');
 
-    logger.transports.file.on('drain', function() {
-      util.checkLoggedMessagesNumber(tempFilename, 2);
-      util.checkLastLogMessage(tempFilename, 'two');
-      logger.close();
-      done();
-    });
+    util.checkLoggedMessagesNumber('all', 3);
+    util.checkLastLogMessage('all', 'three');
+    util.console.restore();
   });
 
-  it('should log all but debug with level `info`', function(done) {
-    var logger = new Logger({
-      level: Logger.LEVEL_INFO,
-      transports: {file: tempFilename}
-    });
+  it('should not log anything with invalid level', function() {
+    Logger.configure({level: 'surprise-me'});
+    var logger = Logger('invalid');
 
     logger.error('one');
     logger.warning('two');
     logger.info('three');
-    logger.debug('four');
 
-    logger.transports.file.on('drain', function() {
-      util.checkLoggedMessagesNumber(tempFilename, 3);
-      util.checkLastLogMessage(tempFilename, 'three');
-      logger.close();
-      done();
-    });
+    util.checkLoggedMessagesNumber('all', 0);
+    util.console.restore();
   });
-
-  it('should log all with level `debug`', function(done) {
-    var logger = new Logger({
-      level: Logger.LEVEL_DEBUG,
-      transports: {file: tempFilename}
-    });
-
-    logger.error('one');
-    logger.warning('two');
-    logger.info('three');
-    logger.debug('four');
-
-    logger.transports.file.on('drain', function() {
-      util.checkLoggedMessagesNumber(tempFilename, 4);
-      util.checkLastLogMessage(tempFilename, 'four');
-      logger.close();
-      done();
-    });
-  });
-
 });

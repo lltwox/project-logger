@@ -1,33 +1,75 @@
-var fs = require('fs'),
-    os = require('os'),
-    crypto = require('crypto');
+var debug = require('debug');
 
-exports.createTempFilename = function() {
-  return os.tmpdir() + 'logtest-'
-    + crypto.randomBytes(4).readUInt32LE(0) + '.log';
-};
+var oldConsoleLog = console.log,
+    oldConsoleError = console.error,
+    oldDebugLog = debug.log;
 
-exports.removeTempFile = function(file) {
-  try {
-    if (fs.existsSync(file)) {
-      fs.unlinkSync(file);
-    }
-  } catch (err) {
-    // ignorring - after each hook
+var content = '',
+    logContent = '',
+    errorContent = '',
+    debugContent = '';
+
+exports.console = {
+
+  mock: function() {
+    content = '';
+    logContent = '';
+    errorContent = '';
+
+    console.log = function(message) {
+      message += '\n';
+      content += message;
+      logContent += message;
+    };
+    console.error = function(message) {
+      message += '\n';
+      content += message;
+      errorContent += message;
+    };
+  },
+
+  restore: function() {
+    console.log = oldConsoleLog;
+    console.error = oldConsoleError;
   }
 };
 
-exports.checkLastLogMessage = function(file, message) {
-  var contents = fs.readFileSync(file, {encoding: 'utf8'});
-  contents.should.endWith(message + '\n');
+exports.debug = {
+
+  mock: function() {
+    debugContent = '';
+
+    debug.log = function(message) {
+      message += '\n';
+      debugContent += message;
+    };
+  },
+
+  restore: function() {
+    debug.log = oldDebugLog;
+  }
 };
 
-exports.checkLoggedMessagesNumber = function(file, number) {
-  var contents = fs.readFileSync(file, {encoding: 'utf8'});
-  contents.trim().split('\n').length.should.equal(number);
+exports.checkLastLogMessage = function(type, message) {
+  var content = exports.getContent(type);
+  content.should.endWith(message + '\n');
 };
 
-exports.checkLogMessageContain = function(file, substring) {
-  var contents = fs.readFileSync(file, {encoding: 'utf8'});
-  contents.indexOf(substring).should.not.equal(-1);
+exports.checkLoggedMessagesNumber = function(type, number) {
+  var content = exports.getContent(type);
+  if (!content.trim()) return Number(0).should.equal(number);
+  content.trim().split('\n').length.should.equal(number);
+};
+
+exports.checkLogMessageContain = function(type, substring) {
+  var content = exports.getContent(type);
+  content.indexOf(substring).should.not.equal(-1);
+};
+
+exports.getContent = function(type) {
+  if (type == 'log') return logContent;
+  if (type == 'error') return errorContent;
+  if (type == 'debug') return debugContent;
+
+  return content;
 };

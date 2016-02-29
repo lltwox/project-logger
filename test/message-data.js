@@ -1,142 +1,103 @@
-var Logger = require('../lib'),
+var Logger = require('../lib').configure({
+      colors: false,
+      ns: 'message-data'
+    }),
     util = require('./util');
 
 describe('Logger', function() {
 
-  var tempFilename;
   beforeEach(function() {
-    tempFilename = util.createTempFilename();
+    util.console.mock();
   });
-  afterEach(function() {
-    util.removeTempFile(tempFilename);
+  after(function() {
+    util.console.restore();
   });
 
-  it('should be able to log nothing', function(done) {
-    var logger = new Logger({
-      transports: {file: tempFilename}
-    });
+  it('should be able to log nothing', function() {
+    var logger = Logger('nothing');
 
     logger.info();
 
-    logger.transports.file.on('drain', function() {
-      util.checkLoggedMessagesNumber(tempFilename, 1);
-      util.checkLastLogMessage(tempFilename, '');
-      logger.close();
-      done();
-    });
+    util.checkLoggedMessagesNumber('all', 1);
+    util.checkLastLogMessage('all', '');
+    util.console.restore();
   });
 
-  it('should be able to log undefined values', function(done) {
-    var logger = new Logger({
-      transports: {file: tempFilename}
-    });
+  it('should be able to log undefined values', function() {
+    var logger = Logger('undefined');
 
     var object = {};
     logger.info(object.property);
 
-    logger.transports.file.on('drain', function() {
-      util.checkLastLogMessage(tempFilename, 'undefined');
-      logger.close();
-      done();
-    });
+    util.checkLastLogMessage('all', 'undefined');
+    util.console.restore();
   });
 
-  it('should be able to log null', function(done) {
-    var logger = new Logger({
-      transports: {file: tempFilename}
-    });
+  it('should be able to log null', function() {
+    var logger = Logger('null');
 
     logger.info(null);
 
-    logger.transports.file.on('drain', function() {
-      util.checkLoggedMessagesNumber(tempFilename, 1);
-      util.checkLastLogMessage(tempFilename, '');
-      logger.close();
-      done();
-    });
+    util.checkLoggedMessagesNumber('all', 1);
+    util.checkLastLogMessage('all', '');
+    util.console.restore();
   });
 
-  it('should be able to log int', function(done) {
-    var logger = new Logger({
-      transports: {file: tempFilename}
-    });
+  it('should be able to log int', function() {
+    var logger = Logger('int');
 
     logger.info(1);
 
-    logger.transports.file.on('drain', function() {
-      util.checkLoggedMessagesNumber(tempFilename, 1);
-      util.checkLastLogMessage(tempFilename, '1');
-      logger.close();
-      done();
-    });
+    util.checkLoggedMessagesNumber('all', 1);
+    util.checkLastLogMessage('all', '1');
+    util.console.restore();
   });
 
-  it('should be able to log string', function(done) {
-    var logger = new Logger({
-      transports: {file: tempFilename}
-    });
+  it('should be able to log string', function() {
+    var logger = Logger('string');
 
     logger.info('string');
 
-    logger.transports.file.on('drain', function() {
-      util.checkLoggedMessagesNumber(tempFilename, 1);
-      util.checkLastLogMessage(tempFilename, 'string');
-      logger.close();
-      done();
-    });
+    util.checkLoggedMessagesNumber('all', 1);
+    util.checkLastLogMessage('all', 'string');
+    util.console.restore();
   });
 
-  it('should be able to log object', function(done) {
-    var logger = new Logger({
-      transports: {file: tempFilename}
-    });
+  it('should be able to log object', function() {
+    var logger = Logger('object');
 
     logger.info({a: {b: 'c'}});
 
-    logger.transports.file.on('drain', function() {
-      util.checkLoggedMessagesNumber(tempFilename, 1);
-      util.checkLastLogMessage(tempFilename, '{"a":{"b":"c"}}');
-      logger.close();
-      done();
-    });
+    util.checkLoggedMessagesNumber('all', 1);
+    util.checkLastLogMessage('all', '{"a":{"b":"c"}}');
+    util.console.restore();
   });
 
-  it('should be able to log error', function(done) {
-    var logger = new Logger({
-      transports: {file: tempFilename}
-    });
+  it('should be able to log error', function() {
+    var logger = Logger('error');
 
     logger.info(new Error('Some error'));
 
-    logger.transports.file.on('drain', function() {
-      util.checkLogMessageContain(tempFilename, 'Some error');
-      logger.close();
-      done();
-    });
+    util.checkLogMessageContain('all', 'Some error');
+    util.console.restore();
   });
 
-  it('should be able to log recursive objects', function(done) {
-    var logger = new Logger({
-      transports: {file: tempFilename}
-    });
+  it('should be able to log recursive objects', function() {
+    var logger = Logger('recursive');
 
     var object = {};
     object.ref = object;
     logger.info(object);
 
-    logger.transports.file.on('drain', function() {
-      util.checkLoggedMessagesNumber(tempFilename, 1);
+    util.checkLoggedMessagesNumber('all', 1);
 
-      // for different node version
-      try {
-        util.checkLogMessageContain(tempFilename, 'Object');
-      } catch(err) {
-        util.checkLogMessageContain(tempFilename, 'Circular');
-      }
-
-      logger.close();
-      done();
-    });
+    // for different node version
+    try {
+      util.checkLogMessageContain('all', 'Object');
+    } catch(err) {
+      util.checkLogMessageContain('all', 'Circular');
+    }
+    util.console.restore();
   });
 
 });

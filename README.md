@@ -1,104 +1,44 @@
 project-logger
 ==============
 
-`project-logger` is simple logging utility for textual application logs. It has only pre-defined message formatting and only few transports to use, so it may be enought for small projects but definetely would be a good fit for use in npm modules as a default logger if `console.log` is not enought.
+`project-logger` is simple logging utility for textual application logs. It has simple log-flooding protection, ability to send messages about errors to master process in the cluster and proxy to `debug` module.
 
 ##Example
 ```js
-var Logger = require('project-logger');
-var logger = new Logger();
-...
+var logger = require('project-logger')('test');
+
 logger.info('Object is now: ', obj);
+// 24 Feb 2016 16:40:14 - [server] - 24010 - INFO:  Object is now:   {"hello":"world"}
+
 logger.error(new Error('Initialization error'));
+// 24 Feb 2016 16:40:14 - [server] - 24010 - ERROR:  Error: Initialization error
+//  at Object.<anonymous> (../example.js:3:14)
+//  ...
 ```
 
-##Api
-###Factory
-`project-logger` module provides a factory and a registry for new loggers. All instances created with factory are stored in memory, so once configured logger can be used throughout the application.
-
-####Factory.get(options)
-Creates a new or returns exisiting instance of a logger. `options` can be either an object, which will be passed to logger for configuration or a string, that will serve as a name, that instance will be remembered by. In case of an object, `name` option will be used to store instance.
+##How to use
+###Configuration
+All loggers share same configuration. It can be set on factory-method. All options with defaults explained below.
 ```js
-var Factory = require('project-logger').Factory;
-var logger = Factory.get({name: 'example', colors: false});
-
-// later in code
-var logger = require('project-logger').get('exmaple'); // same instance as before
+// values below are default ones
+var Logger = require('project-logger').configure({
+  ns: undefined,   // prefix for all logger names
+  level: 'info',   // log level, can be 'error', 'warning' and 'info'
+  console: true,   // whether to send messages to console
+  cluster: false,  // whether to send messages to master process
+  colors: true,    // whether console output should be colored,
+  debug:           // namespaces to enable for debug, see https://www.npmjs.com/package/debug for more info, usual DEBUG env variable works as well
+  repeat: 1000     // time in ms, when identical messages stacked
+});
 ```
 
-####Factory.copy(source, target)
-Creates a copy of existing instance with same configuration, but different name. Only one copy is created, all following calls will return same instance.
+By default loggers try to stack identical messages repeated freqently in one. So if you log same message 100 times in a row in less than a second it will show up in logs only once and then number of times it was repeated (just like syslog). If you don't like it, set `repeat` to 0.
 
-####Factory.set(name, instance)
-Sets an instance for given name. Can be handy for testing.
+####logger.error(...), logger.warning(...), logger.info(...)
+Logs objects and messages with appropriate level. Accepts any number of arguments, that will be concateneted in one message. Argument can be a string, an object or an Error instance, which will result in stack trace logged.
 
-
-###Class: Logger
-####Logger(options)
-Creates a new logger instance. `options` is an object with configuration parameters. Available options are:
-```js
-{
-  name: 'default',     // part of formatted message, can be used to grep logs
-  level: LEVEL_INFO,   // logging level
-  transports: {        // list of transports to use, see below
-    console: true
-  },
-  colors: true,        // whether to use colored output (affects only console transport)
-  format: '{timestamp} - [{name}] - {pid} - {level}:  ',
-                       // format for message prefix
-  repeatTimeout: 1000  // time in ms, when identical messages stacked
-};
-```
-
-By default loggers try to stack identical messages repeated freqently in one. So if you log same message 100 times in a row in less than a second it will show up in logs only once and then number of times it was repeated (just like syslog). If you don't like it, set `repeatTimeout` to 0.
-
-####Logger.LEVEL_*
-Constanst with appropriate log-level values, that can be used in configuration.
-* Logger.LEVEL_NONE = 0
-* Logger.LEVEL_ERROR = 1
-* Logger.LEVEL_WARNING = 2
-* Logger.LEVEL_INFO = 3
-* Logger.LEVEL_DEBUG = 4
-
-####logger.configure(options)
-Configures logger after it was created. `options` have the same meaning as in constructor.
-
-####logger.close()
-Frees any used resources
-
-####logger.error(...), logger.warning(...), logger.info(...), logger.debug(...)
-Logs objects and messages with appropriate severity. Accepts any number of arguments, that will be concateneted in one message. Argument can be a string, an object or an Error instance, which will result in stack trace logged.
-
-####logger.log(...)
-Alias of `logger.info()`
-
-###Transports
-To enable transport, pass it's name in `transports` options hash.
-####Console
-Wrapper around `console.log()` and `console.err`. When `colors=true`, messages will be colored up, depending on their severity.
-####File
-Logs messages to file. Name of the file should be specified as a value of file key in transports hash, like that:
-```js
-{
-  transports: {
-    file: '/tmp/app.log'
-  }
-}
-```
-Transport attempts to create file and whole path to it, if not exists.
-
-###Message format
-Configurable via `format` config option. Available info, that can be user:
-* `{timestamp}` - time and date of logged message
-* `{name}` – name of the used logger
-* `{pid}` – process id
-* `{hostname}` – system host name (os.hostname())
-* `{leve}` – logging level of the message
-
-Default format looks like this:
-```
-30 May 2014 13:05:11 - [cluster] - 31749 - INFO:  Worker tracking:01 disconnected
-```
+####logger.debug(...) 
+Logs debug message with `debug` module
 
 ##Contributing
 Found a bug, have a feature proposal or want to add a pull request? All are welcome. Just go to issues and write it down.
