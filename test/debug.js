@@ -1,7 +1,4 @@
-var Logger = require('../lib').configure({
-      colors: false,
-      ns: 'debug'
-    }),
+var Logger = require('../lib').configure({colors: false}),
     util = require('./util');
 
 describe('Logger', function() {

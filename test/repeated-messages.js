@@ -1,7 +1,4 @@
-var Logger = require('../lib').configure({
-      colors: false,
-      ns: 'repeated-messages'
-    }),
+var Logger = require('../lib').configure({colors: false}),
     util = require('./util');
 
 describe('Logger', function() {
@@ -9,6 +6,7 @@ describe('Logger', function() {
   var oldRepeat;
   before(function() {
     oldRepeat = Logger.config.repeat;
+    Logger.configure({ns: 'repeated-messages'});
   });
   after(function() {
     Logger.configure({repeat: oldRepeat});

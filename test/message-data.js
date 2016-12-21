@@ -1,11 +1,11 @@
-var Logger = require('../lib').configure({
-      colors: false,
-      ns: 'message-data'
-    }),
+var Logger = require('../lib').configure({colors: false}),
     util = require('./util');
 
 describe('Logger', function() {
 
+  before(function() {
+    Logger.configure({ns: 'message-data'});
+  });
   beforeEach(function() {
     util.console.mock();
   });
@@ -78,7 +78,7 @@ describe('Logger', function() {
 
     logger.info(new Error('Some error'));
 
-    util.checkLogMessageContain('all', 'Some error');
+    util.checkLogMessageContains('all', 'Some error');
     util.console.restore();
   });
 
@@ -93,9 +93,9 @@ describe('Logger', function() {
 
     // for different node version
     try {
-      util.checkLogMessageContain('all', 'Object');
+      util.checkLogMessageContains('all', 'Object');
     } catch(err) {
-      util.checkLogMessageContain('all', 'Circular');
+      util.checkLogMessageContains('all', 'Circular');
     }
     util.console.restore();
   });

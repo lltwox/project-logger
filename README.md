@@ -29,6 +29,7 @@ var Logger = require('project-logger').configure({
   colors: true,    // whether console output should be colored,
   debug:           // namespaces to enable for debug, see https://www.npmjs.com/package/debug for more info, usual DEBUG env variable works as well
   repeat: 1000     // time in ms, when identical messages stacked
+  simple-prefix: false // whether timestamp and process id should omitted from prefix
 });
 ```
 

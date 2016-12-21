@@ -1,6 +1,5 @@
 var Logger = require('../lib').configure({
-      colors: false,
-      ns: 'levels'
+      colors: false
     }),
     util = require('./util');
 
@@ -8,6 +7,7 @@ describe('Logger', function() {
 
   var oldLevel;
   before(function() {
+    Logger.configure({ns: 'levels'});
     oldLevel = Logger.config.level;
   });
   after(function() {

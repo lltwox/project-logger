@@ -61,9 +61,14 @@ exports.checkLoggedMessagesNumber = function(type, number) {
   content.trim().split('\n').length.should.equal(number);
 };
 
-exports.checkLogMessageContain = function(type, substring) {
+exports.checkLogMessageContains = function(type, substring) {
   var content = exports.getContent(type);
   content.indexOf(substring).should.not.equal(-1);
+};
+
+exports.checkLogMessageDoesNotContain = function(type, substring) {
+  var content = exports.getContent(type);
+  content.indexOf(substring).should.equal(-1);
 };
 
 exports.getContent = function(type) {

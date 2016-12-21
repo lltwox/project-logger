@@ -1,4 +1,4 @@
-var Logger = require('../lib').configure();
+var Logger = require('../lib');
 
 describe('Logger', function() {
 
@@ -10,7 +10,7 @@ describe('Logger', function() {
     Logger.configure({repeat: oldRepeat});
   });
 
-  it('proxy configuration from instance to global', function() {
+  it('should proxy configuration from instance to global', function() {
     var logger = Logger('config:proxy');
     logger.configure({
       repeat: 10
