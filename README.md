@@ -41,5 +41,15 @@ Logs objects and messages with appropriate level. Accepts any number of argument
 ####logger.debug(...) 
 Logs debug message with `debug` module
 
+####logger.progress(...) 
+Logs info message to console via process.stdout.write(). This do not add new 
+line at the end of the message. Starts progress mode.
+
+####logger.progressReplace(...) 
+Same as `logger.progress(...)` but also clears all input from current progress session from console output.
+
+####logger.progressEnd(...) 
+Same as `logger.progress(...)` but ends current progress session and adds new line at the end.
+
 ##Contributing
 Found a bug, have a feature proposal or want to add a pull request? All are welcome. Just go to issues and write it down.
