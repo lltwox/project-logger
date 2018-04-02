@@ -1,6 +1,6 @@
 {
   "name": "project-logger",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "description": "Logger with basic capabilities for small projects",
   "homepage": "https://github.com/lltwox/project-logger",
   "keywords": [
@@ -24,7 +24,8 @@
   "dependencies": {
     "colors": "^1.1.2",
     "debug": "^2.6.3",
-    "moment": "^2.18.1"
+    "moment": "^2.18.1",
+    "strip-ansi": "^4.0.0"
   },
   "devDependencies": {
     "mocha": "^3.2.0",
