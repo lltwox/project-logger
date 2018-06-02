@@ -97,14 +97,27 @@ describe('Logger', function() {
     logger.configure({'simple-prefix': oldSimplePrefix});
   });
 
-  it('should add level to simple prefix', function() {
+  it('should add error level to simple prefix', function() {
+    var logger = Logger('nothing');
+    logger.configure({'simple-prefix': true});
+
+    logger.error('hello');
+
+    util.checkLoggedMessagesNumber('all', 1);
+    util.checkLogMessageContains('all', 'ERROR');
+
+    util.console.restore();
+    logger.configure({'simple-prefix': oldSimplePrefix});
+  });
+
+  it('should not add info level to simple prefix', function() {
     var logger = Logger('nothing');
     logger.configure({'simple-prefix': true});
 
     logger.info('hello');
 
     util.checkLoggedMessagesNumber('all', 1);
-    util.checkLogMessageContains('all', 'INFO');
+    util.checkLogMessageDoesNotContain('all', 'INFO');
 
     util.console.restore();
     logger.configure({'simple-prefix': oldSimplePrefix});
