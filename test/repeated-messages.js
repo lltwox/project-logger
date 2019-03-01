@@ -50,16 +50,16 @@ describe('Logger', function() {
     });
   });
 
-  it('should log repeated messages immediately if other'
-    + ' message gets logged', function(done) {
+  it('should log repeated messages immediately if other' +
+    ' message gets logged', function(done) {
 
     Logger.configure({repeat: 10});
     var logger = Logger('immediate');
 
     logger.info('one');
-    setTimeout(function() {
+    process.nextTick(function() {
       logger.info('one');
-      setTimeout(function() {
+      process.nextTick(function() {
         logger.info('two');
       }, 1);
     }, 1);
